@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wet Sand — Santa Teresa, Costa Rica</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sand: #E8DFD0;
+    --sand-light: #F5F0E8;
+    --ocean: #1A6B6A;
+    --ocean-deep: #0E4544;
+    --ocean-light: #2A8B8A;
+    --sunset: #D4835E;
+    --sunset-glow: #E6A67A;
+    --driftwood: #6B5E4F;
+    --charcoal: #2C2824;
+    --white: #FEFCF9;
+    --jungle: #3A5A40;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    color: var(--charcoal);
+    background: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 3rem;
+    transition: background 0.4s, backdrop-filter 0.4s, box-shadow 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(254,252,249,0.92);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 20px rgba(0,0,0,0.06);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 1.6rem;
+    letter-spacing: 0.08em;
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.4s;
+  }
+  nav.scrolled .nav-logo { color: var(--charcoal); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    font-size: 0.82rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgba(255,255,255,0.85);
+    transition: color 0.3s;
+  }
+  nav.scrolled .nav-links a { color: var(--driftwood); }
+  .nav-links a:hover { color: var(--sunset); }
+  .nav-cta {
+    background: var(--ocean) !important;
+    color: var(--white) !important;
+    padding: 0.6rem 1.4rem;
+    border-radius: 2px;
+    transition: background 0.3s !important;
+  }
+  .nav-cta:hover { background: var(--ocean-deep) !important; }
+
+  .mobile-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    z-index: 200;
+  }
+  .mobile-toggle span {
+    width: 24px; height: 2px;
+    background: var(--white);
+    transition: background 0.4s;
+  }
+  nav.scrolled .mobile-toggle span { background: var(--charcoal); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 700px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg,
+        rgba(14,69,68,0.15) 0%,
+        rgba(14,69,68,0.05) 40%,
+        rgba(44,40,36,0.55) 100%
+      ),
+      linear-gradient(135deg,
+        #1A6B6A 0%, #2A8B8A 25%, #D4835E 60%, #E6A67A 80%, #E8DFD0 100%
+      );
+    background-size: cover;
+    animation: heroShift 20s ease-in-out infinite alternate;
+  }
+  @keyframes heroShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+  .hero-texture {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+  }
+  /* Wave SVG at bottom of hero */
+  .hero-wave {
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    z-index: 2;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    padding: 0 3rem 8rem;
+    max-width: 800px;
+  }
+  .hero-tag {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--sunset-glow);
+    margin-bottom: 1.2rem;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 1.05;
+    color: var(--white);
+    margin-bottom: 1.2rem;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--sunset-glow);
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.7;
+    max-width: 540px;
+    margin-bottom: 2rem;
+  }
+  .hero-btn {
+    display: inline-block;
+    padding: 0.9rem 2.2rem;
+    background: var(--sunset);
+    color: var(--white);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .hero-btn:hover { background: var(--sunset-glow); transform: translateY(-2px); }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 6rem 3rem; }
+
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ocean);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.15;
+    color: var(--charcoal);
+    margin-bottom: 1.5rem;
+  }
+  .section-title em { font-style: italic; color: var(--ocean); }
+
+  /* ─── INTRO / ABOUT ─── */
+  .intro {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .intro-text p {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: var(--driftwood);
+    margin-bottom: 1.2rem;
+  }
+  .intro-visual {
+    position: relative;
+    aspect-ratio: 4/5;
+    border-radius: 4px;
+    overflow: hidden;
+    background:
+      linear-gradient(160deg, var(--ocean) 0%, var(--ocean-light) 40%, var(--sand) 100%);
+  }
+  .intro-visual-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .intro-visual-inner .wave-icon {
+    width: 80px;
+    opacity: 0.3;
+  }
+  .intro-visual-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+  }
+
+  /* ─── FEATURES ─── */
+  .features-section {
+    background: var(--sand-light);
+  }
+  .features-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .feature-card {
+    background: var(--white);
+    padding: 2.5rem 2rem;
+    border-radius: 4px;
+    border: 1px solid rgba(107,94,79,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+  }
+  .feature-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 1.4rem;
+    color: var(--ocean);
+  }
+  .feature-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 1.35rem;
+    margin-bottom: 0.8rem;
+    color: var(--charcoal);
+  }
+  .feature-card p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--driftwood);
+  }
+
+  /* ─── LOCATION ─── */
+  .location-section {
+    background: var(--ocean-deep);
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .location-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 80%, rgba(212,131,94,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(42,139,138,0.2) 0%, transparent 50%);
+  }
+  .location-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+  .location-wrap .section-label { color: var(--sunset-glow); }
+  .location-wrap .section-title { color: var(--white); }
+  .location-wrap .section-title em { color: var(--sunset-glow); }
+  .location-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 2.5rem;
+  }
+  .location-desc {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 1.5rem;
+  }
+  .location-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+  }
+  .loc-highlight {
+    padding: 1.2rem;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .loc-highlight-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--sunset-glow);
+    margin-bottom: 0.4rem;
+  }
+  .loc-highlight-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: var(--white);
+  }
+  .location-map-placeholder {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .location-map-placeholder svg { opacity: 0.3; }
+  .location-map-placeholder span {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.35);
+  }
+
+  /* ─── THINGS TO DO ─── */
+  .activities-section {
+    background: var(--white);
+  }
+  .activities-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .activity-card {
+    position: relative;
+    aspect-ratio: 3/4;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.35s;
+  }
+  .activity-card:hover { transform: scale(1.02); }
+  .activity-card-bg {
+    position: absolute;
+    inset: 0;
+    transition: transform 0.6s;
+  }
+  .activity-card:hover .activity-card-bg { transform: scale(1.08); }
+  .activity-card:nth-child(1) .activity-card-bg {
+    background: linear-gradient(135deg, #2A8B8A 0%, #1A6B6A 60%, #0E4544 100%);
+  }
+  .activity-card:nth-child(2) .activity-card-bg {
+    background: linear-gradient(135deg, #D4835E 0%, #c06a42 60%, #a3572f 100%);
+  }
+  .activity-card:nth-child(3) .activity-card-bg {
+    background: linear-gradient(135deg, #3A5A40 0%, #2d4832 60%, #1e3322 100%);
+  }
+  .activity-card:nth-child(4) .activity-card-bg {
+    background: linear-gradient(135deg, #6B5E4F 0%, #574c3f 60%, #3d3530 100%);
+  }
+  .activity-card-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    background: linear-gradient(0deg, rgba(0,0,0,0.5) 0%, transparent 60%);
+  }
+  .activity-card-content h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: 1.4rem;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+  }
+  .activity-card-content p {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* ─── BOOKING CTA ─── */
+  .booking-section {
+    background: var(--sand-light);
+    text-align: center;
+  }
+  .booking-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .booking-wrap .section-title { margin-bottom: 1rem; }
+  .booking-desc {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--driftwood);
+    margin-bottom: 2.5rem;
+  }
+  .booking-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 0.8rem;
+    align-items: end;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--driftwood);
+    margin-bottom: 0.5rem;
+  }
+  .form-group input, .form-group select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(107,94,79,0.2);
+    border-radius: 2px;
+    background: var(--white);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    color: var(--charcoal);
+    transition: border-color 0.3s;
+  }
+  .form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--ocean);
+  }
+  .booking-btn {
+    padding: 0.85rem 2rem;
+    background: var(--ocean);
+    color: var(--white);
+    border: none;
+    border-radius: 2px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.3s;
+    white-space: nowrap;
+  }
+  .booking-btn:hover { background: var(--ocean-deep); }
+  .booking-note {
+    margin-top: 1.2rem;
+    font-size: 0.8rem;
+    color: var(--driftwood);
+    opacity: 0.7;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--charcoal);
+    color: rgba(255,255,255,0.6);
+    padding: 4rem 3rem 2rem;
+  }
+  .footer-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: 1.8rem;
+    color: var(--white);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+  .footer-tagline {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    max-width: 300px;
+  }
+  .footer-col h5 {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+    margin-bottom: 1.2rem;
+  }
+  .footer-col a {
+    display: block;
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.5);
+    text-decoration: none;
+    margin-bottom: 0.7rem;
+    transition: color 0.3s;
+  }
+  .footer-col a:hover { color: var(--sunset-glow); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+  }
+
+  /* ─── SCROLL ANIMATIONS ─── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .mobile-toggle { display: flex; }
+    section { padding: 4rem 1.5rem; }
+    .hero-content { padding: 0 1.5rem 6rem; }
+    .intro { grid-template-columns: 1fr; gap: 2rem; }
+    .intro-visual { aspect-ratio: 16/9; }
+    .features-grid { grid-template-columns: 1fr; }
+    .location-grid { grid-template-columns: 1fr; }
+    .activities-grid { grid-template-columns: 1fr 1fr; }
+    .booking-form { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-bottom { flex-direction: column; gap: 0.5rem; }
+  }
+  @media (max-width: 600px) {
+    .activities-grid { grid-template-columns: 1fr; }
+    .location-highlights { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Wet Sand</a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#amenities">Amenities</a>
+    <a href="#location">Location</a>
+    <a href="#explore">Explore</a>
+    <a href="#booking" class="nav-cta">Inquire</a>
+  </div>
+  <div class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-texture"></div>
+  <svg class="hero-wave" viewBox="0 0 1440 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 40C240 80 480 10 720 50C960 90 1200 20 1440 60V100H0Z" fill="var(--white)"/>
+  </svg>
+  <div class="hero-content">
+    <div class="hero-tag">Santa Teresa, Costa Rica</div>
+    <h1>Where the <em>jungle</em><br>meets the sea</h1>
+    <p class="hero-sub">A vacation rental at the heart of Santa Teresa — steps from white sand beaches, world-class surf, and unforgettable Pacific sunsets.</p>
+    <a href="#booking" class="hero-btn">Check Availability</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="background: var(--white);">
+  <div class="intro">
+    <div class="intro-text reveal">
+      <div class="section-label">The Property</div>
+      <h2 class="section-title">Your <em>home base</em> in paradise</h2>
+      <p>Wet Sand sits at the center of Santa Teresa, perfectly positioned right across from a beach access path that leads straight to the stunning Santa Teresa beach. Walk out the door and feel sand between your toes in minutes.</p>
+      <p>The property offers a laid-back, comfortable retreat after days spent surfing, exploring tide pools, or discovering the incredible local dining scene. With everything in town within easy reach, you won't need to worry about complicated logistics — just pure relaxation.</p>
+      <p>Whether you're here for the legendary surf breaks, yoga and wellness, or simply to unwind with golden sunsets over the Pacific, Wet Sand puts you exactly where you want to be.</p>
+    </div>
+    <div class="intro-visual reveal" style="transition-delay: 0.15s;">
+      <div class="intro-visual-inner">
+        <svg class="wave-icon" viewBox="0 0 80 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 20C10 10 20 10 30 20C40 30 50 30 60 20C70 10 80 10 80 20" stroke="white" stroke-width="2" fill="none"/>
+          <path d="M0 30C10 20 20 20 30 30C40 40 50 40 60 30C70 20 80 20 80 30" stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>
+        </svg>
+        <span class="intro-visual-label">Photo placeholder</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AMENITIES -->
+<section id="amenities" class="features-section">
+  <div class="features-wrap">
+    <div class="reveal">
+      <div class="section-label">What We Offer</div>
+      <h2 class="section-title">Everything you need, <em>nothing you don't</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <svg class="feature-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="22" cy="16" r="6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 38c0-7.7 6.3-14 14-14s14 6.3 14 14" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <h3>Beach Access</h3>
+        <p>Step outside and cross the road to a direct path leading to Santa Teresa Beach — one of Costa Rica's most beautiful stretches of coastline.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.1s">
+        <svg class="feature-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 6v32M14 14l8-8 8 8M10 26h24M6 34h32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <h3>Central Location</h3>
+        <p>Restaurants, shops, surf rentals, yoga studios, and markets are all within walking distance. You're in the heart of town.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.2s">
+        <svg class="feature-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="8" width="28" height="28" rx="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 18h28M18 18v18M28 18v18" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <h3>Comfortable Living</h3>
+        <p>A thoughtfully designed space with everything you need for a relaxing stay — from a fully equipped kitchen to cozy sleeping quarters.</p>
+      </div>
+      <div class="feature-card reveal">
+        <svg class="feature-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="22" cy="22" r="14" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M22 12v10l6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <h3>Flexible Stays</h3>
+        <p>Whether you're here for a long weekend getaway or an extended stay, we accommodate a range of plans to suit your schedule.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.1s">
+        <svg class="feature-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 22C6 22 14 8 22 8s16 14 16 14-8 14-16 14S6 22 6 22z" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="22" cy="22" r="5" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <h3>Sunset Views</h3>
+        <p>Santa Teresa is famous for its Pacific sunsets. The beach gathering at golden hour is a daily ritual you'll never tire of.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.2s">
+        <svg class="feature-icon" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22 8C15 8 8 14 8 22c0 5 3 10 8 13l6 3 6-3c5-3 8-8 8-13 0-8-7-14-14-14z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M18 20l3 3 5-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Local Tips</h3>
+        <p>We provide a curated guide to the best surf spots, restaurants, hidden beaches, and day-trip adventures around the Nicoya Peninsula.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section id="location" class="location-section">
+  <div class="location-wrap">
+    <div class="reveal">
+      <div class="section-label">Location</div>
+      <h2 class="section-title">The heart of <em>Santa Teresa</em></h2>
+    </div>
+    <div class="location-grid">
+      <div class="reveal">
+        <p class="location-desc">Santa Teresa sits on the southern tip of Costa Rica's Nicoya Peninsula — a Blue Zone destination known for natural beauty, incredible surf, and a thriving wellness culture. The town has a single main road lined with restaurants, yoga studios, surf shops, and cozy cafés, all backed by lush jungle and facing the Pacific Ocean.</p>
+        <p class="location-desc">Wet Sand is positioned right in the middle of it all. Walk to dinner, rent a surfboard, grab a fresh smoothie, or simply cross the road and head straight to the beach.</p>
+        <div class="location-highlights">
+          <div class="loc-highlight">
+            <div class="loc-highlight-label">Beach</div>
+            <div class="loc-highlight-value">Across the road</div>
+          </div>
+          <div class="loc-highlight">
+            <div class="loc-highlight-label">Restaurants</div>
+            <div class="loc-highlight-value">Walking distance</div>
+          </div>
+          <div class="loc-highlight">
+            <div class="loc-highlight-label">Surf Breaks</div>
+            <div class="loc-highlight-value">Steps away</div>
+          </div>
+          <div class="loc-highlight">
+            <div class="loc-highlight-label">From San José</div>
+            <div class="loc-highlight-value">~5 hrs by car + ferry</div>
+          </div>
+        </div>
+      </div>
+      <div class="location-map-placeholder reveal" style="transition-delay:0.15s">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <path d="M24 4C16.3 4 10 10.3 10 18c0 11 14 26 14 26s14-15 14-26c0-7.7-6.3-14-14-14z" stroke="white" stroke-width="1.5"/>
+          <circle cx="24" cy="18" r="5" stroke="white" stroke-width="1.5"/>
+        </svg>
+        <span>Map integration coming soon</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THINGS TO DO -->
+<section id="explore" class="activities-section">
+  <div class="activities-wrap">
+    <div class="reveal">
+      <div class="section-label">Explore</div>
+      <h2 class="section-title">There's no <em>shortage</em> of adventure</h2>
+    </div>
+    <div class="activities-grid">
+      <div class="activity-card reveal">
+        <div class="activity-card-bg"></div>
+        <div class="activity-card-content">
+          <h4>Surfing</h4>
+          <p>Consistent swells year-round make Santa Teresa one of Costa Rica's top surf destinations for all levels.</p>
+        </div>
+      </div>
+      <div class="activity-card reveal" style="transition-delay:0.1s">
+        <div class="activity-card-bg"></div>
+        <div class="activity-card-content">
+          <h4>Sunsets</h4>
+          <p>The nightly gathering on the beach as the sun dips into the Pacific is a ritual you won't want to miss.</p>
+        </div>
+      </div>
+      <div class="activity-card reveal" style="transition-delay:0.2s">
+        <div class="activity-card-bg"></div>
+        <div class="activity-card-content">
+          <h4>Nature & Wildlife</h4>
+          <p>From Cabo Blanco Reserve to jungle canopy tours, the Nicoya Peninsula is rich with biodiversity.</p>
+        </div>
+      </div>
+      <div class="activity-card reveal" style="transition-delay:0.3s">
+        <div class="activity-card-bg"></div>
+        <div class="activity-card-content">
+          <h4>Food & Wellness</h4>
+          <p>Fresh tropical cuisine, yoga studios, and a thriving café culture define daily life here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING CTA -->
+<section id="booking" class="booking-section">
+  <div class="booking-wrap">
+    <div class="reveal">
+      <div class="section-label">Stay With Us</div>
+      <h2 class="section-title">Ready to <em>feel the sand</em>?</h2>
+      <p class="booking-desc">Send us your preferred dates and we'll get back to you with availability and rates. We can't wait to host you at Wet Sand.</p>
+    </div>
+    <div class="booking-form reveal" style="transition-delay:0.1s">
+      <div class="form-group">
+        <label>Check In</label>
+        <input type="date" id="checkin">
+      </div>
+      <div class="form-group">
+        <label>Check Out</label>
+        <input type="date" id="checkout">
+      </div>
+      <div class="form-group">
+        <label>Guests</label>
+        <select>
+          <option>1 Guest</option>
+          <option>2 Guests</option>
+          <option>3 Guests</option>
+          <option>4 Guests</option>
+          <option>5+ Guests</option>
+        </select>
+      </div>
+      <button class="booking-btn" onclick="alert('Thank you for your inquiry! We will be in touch shortly.')">Inquire</button>
+    </div>
+    <p class="booking-note">Full booking system coming soon. For now, we'll respond to inquiries within 24 hours.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Wet Sand</div>
+        <p class="footer-tagline">A vacation rental in the heart of Santa Teresa, Costa Rica. Steps from the beach, surrounded by jungle, and ready for your next adventure.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Navigate</h5>
+        <a href="#about">About</a>
+        <a href="#amenities">Amenities</a>
+        <a href="#location">Location</a>
+        <a href="#explore">Explore</a>
+      </div>
+      <div class="footer-col">
+        <h5>Info</h5>
+        <a href="#booking">Book a Stay</a>
+        <a href="#">House Rules</a>
+        <a href="#">FAQ</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h5>Connect</h5>
+        <a href="#">Instagram</a>
+        <a href="#">WhatsApp</a>
+        <a href="#">Email</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Wet Sand · Santa Teresa, Costa Rica</span>
+      <span>Built with salt air & sunshine</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Navbar scroll effect
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Mobile nav
+  const style = document.createElement('style');
+  style.textContent = `
+    @media (max-width: 900px) {
+      .nav-links.show {
+        display: flex !important;
+        flex-direction: column;
+        position: fixed;
+        inset: 0;
+        background: rgba(44,40,36,0.97);
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        z-index: 150;
+      }
+      .nav-links.show a {
+        color: rgba(255,255,255,0.85) !important;
+        font-size: 1.1rem;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+</script>
+
+</body>
+</html>
