@@ -166,13 +166,13 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between}
 .contact-blurb p{color:var(--ink-soft);margin:16px 0 26px}
 .contact-line{display:flex;gap:14px;align-items:baseline;padding:13px 0;border-top:1px dashed rgba(19,51,43,.16);font-size:15.5px}
 .contact-line b{min-width:84px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--tide)}
-form{background:#fff;border-radius:22px;padding:40px;box-shadow:0 20px 50px rgba(19,51,43,.10)}
+form{position:relative;background:#fff;border-radius:22px;padding:40px;box-shadow:0 20px 50px rgba(19,51,43,.10)}
 .field{margin-bottom:20px}
 label{display:block;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ink-soft);margin-bottom:8px}
 input,textarea,select{width:100%;font-family:var(--body);font-size:16px;color:var(--ink);background:var(--sand);border:1px solid rgba(19,51,43,.12);border-radius:12px;padding:14px 16px}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--tide);box-shadow:0 0 0 3px rgba(14,124,115,.15)}
 textarea{resize:vertical;min-height:110px}
-  /* iPhone Safari gives date fields a built-in minimum width; reset it so they fit the column */
+/* iPhone Safari gives date fields a built-in minimum width; reset it so they fit the column */
 .field{min-width:0}
 input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width:0;max-width:100%;min-height:52px;line-height:1.3}
 input[type=date]::-webkit-date-and-time-value{text-align:left;margin:0}
@@ -180,6 +180,7 @@ input[type=date]::-webkit-datetime-edit{padding:0}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 button[type=submit]{width:100%;font-family:var(--body);font-weight:700;font-size:16px;color:#fff;background:var(--coral);border:none;border-radius:100px;padding:17px;cursor:pointer;box-shadow:0 8px 24px rgba(240,100,74,.35);transition:background .2s}
 button[type=submit]:hover{background:var(--coral-deep)}
+button[type=submit]:disabled{opacity:.7;cursor:default}
 @media(max-width:880px){.contact .wrap{grid-template-columns:1fr;gap:44px}.field-row{grid-template-columns:1fr}form{padding:28px 22px}}
 
 .form-note{margin-top:14px;font-size:14.5px;color:var(--ink-soft);text-align:center}
@@ -401,8 +402,8 @@ footer small{font-size:13px;color:#6E9486}
       <div class="contact-line"><b>Email</b><span>stay@wetsandcr.com</span></div>
       <div class="contact-line"><b>WhatsApp</b><span>+506 0000 0000</span></div>
     </div>
-    <!-- Replace YOUR_FORM_ID with your Formspree form ID (or swap this form for your booking widget later) -->
-    <form  action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+    <!-- Booking requests go to Formspree form mbgopprj, which emails them to you -->
+    <form  action="https://formspree.io/f/mbgopprj" method="POST">
       <div class="field-row">
         <div class="field"><label for="name">Name</label><input id="name" name="name" type="text" required autocomplete="name"></div>
         <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required autocomplete="email"></div>
@@ -416,7 +417,9 @@ footer small{font-size:13px;color:#6E9486}
         <div class="field"><label for="suite">Preferred suite</label><select id="suite" name="suite"><option>Any / best available</option><option>Garden Suite</option><option>Canopy Suite</option><option>Sunset Penthouse</option><option>Whole villa</option></select></div>
       </div>
       <div class="field"><label for="message">Anything else?</label><textarea id="message" name="message" placeholder="Surf trip, honeymoon, remote work month — tell us what you're planning."></textarea></div>
-      <button type="submit">Request dates</button>
+      <input type="hidden" name="_subject" value="New booking request from wetsandcr.com">
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      <button type="submit" id="sendBtn">Request dates</button>
       <p class="form-note" id="formNote" role="status"></p>
     </form>
   </div>
@@ -436,11 +439,27 @@ const nav=document.getElementById('nav');
 addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>60),{passive:true});
 
 /* ---------- Booking form ---------- */
-const form=document.querySelector('form'),note=document.getElementById('formNote');
-form.addEventListener('submit',e=>{
+const form=document.querySelector('form'),note=document.getElementById('formNote'),sendBtn=document.getElementById('sendBtn');
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
   const ci=form.querySelector('#checkin').value,co=form.querySelector('#checkout').value;
-  if(ci&&co&&co<=ci){e.preventDefault();note.textContent='Check-out needs to be after check-in.';return}
-  if(form.action.includes('YOUR_FORM_ID')){e.preventDefault();note.textContent='Booking requests aren\u2019t connected yet. Email stay@wetsandcr.com with your dates for now.'}
+  if(ci&&co&&co<=ci){note.textContent='Check-out needs to be after check-in.';return}
+  sendBtn.disabled=true;sendBtn.textContent='Sending\u2026';note.textContent='';
+  try{
+    const r=await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json'}});
+    if(!r.ok){
+      // Formspree explains rejections (e.g. an invalid email); show its message when there is one
+      const data=await r.json().catch(()=>({}));
+      const msg=(data.errors||[]).filter(x=>x.message).map(x=>x.field?x.field.charAt(0).toUpperCase()+x.field.slice(1)+' '+x.message+'.':x.message).join(' ');
+      throw new Error(msg);
+    }
+    form.reset();
+    note.textContent='Thanks! Your request is in. We\u2019ll reply within 24 hours with availability and rates.';
+    sendBtn.textContent='Request sent';
+  }catch(err){
+    note.textContent=err.message||'That didn\u2019t go through. Check your connection and try again, or email stay@wetsandcr.com.';
+    sendBtn.disabled=false;sendBtn.textContent='Request dates';
+  }
 });
 
 /* ---------- Gallery ---------- */
